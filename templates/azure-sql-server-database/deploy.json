@@ -2,15 +2,32 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json",
     "contentVersion": "0.0.1.1",
     "parameters": {
-        "": {
+        "serverName": {
             "type": "string",
+            "minLength": 1
+        },
+        "adminUsername": {
+            "type": "string",
+            "defaultValue": "db-admin",
+            "minLength": 1
+        },
+        "adminPassword": {
+            "type": "securestring",
             "minLength": 1
         },
         "databaseName": {
             "type": "string",
             "minLength": 1
         },
-        "collation": {
+        "databaseEdition": {
+            "type": "string",
+            "allowedValues": [
+                "Basic",
+                "Standard",
+                "Premium"
+            ]
+        },
+        "databaseCollation": {
             "type": "string",
             "defaultValue": "Latin1_General_100_CS_AS",
             "minLength": 1
@@ -19,7 +36,7 @@
             "type": "string",
             "defaultValue": "[resourceGroup().location]",
             "metadata": {
-                "description": "The resource group the datbase exists in."
+                "description": "Location for all resources."
             }
         }
     },
@@ -29,8 +46,26 @@
             "name": "[parameters('serverName')]",
             "type": "Microsoft.Sql/servers",
             "location": "[parameters('location')]",
-            "properties": {},
+            "kind": "v12.0",
+            "properties": {
+                "administratorLogin": "[parameters('adminUsername')]",
+                "administratorLoginPassword": "[parameters('adminPassword')]",
+                "version": "12.0"
+            },
             "resources": [
+                {
+                    "name": "[uniqueString(parameters('serverName'), 'AllowAllWindowsAzureIps' )]",
+                    "type": "firewallRules",
+                    "location": "[parameters('location')]",
+                    "apiVersion": "2014-04-01",
+                    "dependsOn": [
+                        "[concat('Microsoft.Sql/servers/', parameters('serverName'))]"
+                    ],
+                    "properties": {
+                        "startIpAddress": "0.0.0.0",
+                        "endIpAddress": "0.0.0.0"
+                    }
+                },
                 {
                     "name": "[parameters('databaseName')]",
                     "type": "databases",
@@ -40,16 +75,19 @@
                     "dependsOn": [
                         "[parameters('serverName')]"
                     ],
-                    "tags": {
-                        "displayName": "sonar"
-                    },
                     "properties": {
-                        "collation": "[variables('sonarCollation')]",
-                        "edition": "[parameters('sonarEdition')]",
+                        "collation": "[parameters('databaseCollation')]",
+                        "edition": "[parameters('databaseEdition')]",
                         "maxSizeBytes": "1073741824"
                     }
                 }
             ]
         }
-    ]
+    ],
+    "outputs": {
+        "connectionString": {
+            "type": "string",
+            "value": "[concat('jdbc:sqlserver://', reference(resourceId('Microsoft.Sql/servers',parameters('serverName'))).fullyQualifiedDomainName ,';databaseName=',parameters('databaseName'))]"
+        }
+    }
 }
