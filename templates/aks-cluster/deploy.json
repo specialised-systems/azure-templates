@@ -1,0 +1,86 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "0.0.1.1",
+    "parameters": {
+        "clusterName": {
+            "type": "string",
+            "minLength": 1
+        },
+        "networkName": {
+            "type": "string",
+            "minLength": 1
+        },
+        "subnetName": {
+            "type": "string",
+            "minLength": 1
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]"
+        },
+        "dnsPrefix": {
+            "type": "string",
+            "minLength": 1
+        },
+        "nodeCount": {
+            "type": "int",
+            "defaultValue": 1,
+            "minValue": 1,
+            "maxValue": 50
+        },
+        "nodeVMSize": {
+            "type": "string",
+            "defaultValue": "Standard_DS2_v2",
+        },
+        "servicePrincipalClientId": {
+            "type": "string",
+            "minLength": 1
+        },
+        "servicePrincipalClientSecret": {
+            "type": "string",
+            "minLength": 1
+        }
+    },
+    "variables": {
+        "linuxAdminUsername": "admin",
+        "operatingSystem": "Linux"
+    },
+    "resources": [
+        {
+            "apiVersion": "2019-08-01",
+            "type": "Microsoft.ContainerService/managedClusters",
+            "location": "[parameters('location')]",
+            "name": "[parameters('clusterName')]",
+            "properties": {
+                "dnsPrefix": "[parameters('dnsPrefix')]",
+                "agentPoolProfiles": [
+                    {
+                        "name": "nodes",
+                        "count": "[parameters('nodeCount')]",
+                        "vmSize": "[parameters('nodeVMSize')]",
+                        "osType": "[variables('operatingSystem')]",
+                        "vnetSubnetID": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('networkName'), parameters('subnetName'))]",
+                        "storageProfile": "ManagedDisks"
+                    }
+                ],
+                "servicePrincipalProfile": {
+                    "clientId": "[parameters('servicePrincipalClientId')]",
+                    "Secret": "[parameters('servicePrincipalClientSecret')]"
+                },
+                "networkProfile": {
+                    "serviceCidr": "10.6.0.0/24",
+                    "podCidr":"10.6.1.0/24",
+                    "dockerBridgeCidr": "172.17.0.1/16",
+                    "dnsServiceIP":"10.6.0.10",
+                    "networkPlugin": "azure"
+                }
+            }
+        }
+    ],
+    "outputs": {
+        "controlPlaneFQDN": {
+            "type": "string",
+            "value": "[reference(parameters('clusterName')).fqdn]"
+        }
+    }
+}
