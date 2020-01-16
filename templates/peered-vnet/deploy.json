@@ -6,20 +6,15 @@
             "type": "string",
             "minLength": 1
         },
+        "existingNetworkSubscriptionId": {
+            "type": "string",
+            "minLength": 1
+        },
         "newNetworkName": {
             "type": "string",
             "minLength": 1
         },
         "newNetworkAddressPrefix": {
-            "type": "string",
-            "minLength": 1
-        },
-
-        "newNetworkSubnetName": {
-            "type": "string",
-            "minLength": 1
-        },
-        "newNetworkSubnetPrefix": {
             "type": "string",
             "minLength": 1
         },
@@ -29,12 +24,12 @@
         },
         "location": {
             "type": "string",
-            "defaultValue": "[resourceGroup().location]"
+            "defaultValue": ""
         }
     },
     "variables": {
-        "existingNetworkIdentifier": "[resourceId(parameters('existingNetworkResourceGroupName'), 'Microsoft.Network/virtualNetworks', parameters('existingNetworkName'))]",
-        "peeringName": "[concat(parameters('newNetworkName'), '/peering-to-', concat(parameters('existingNetworkName'))]"
+        "existingNetworkIdentifier": "[resourceId(parameters('existingNetworkSubscriptionId'), parameters('existingNetworkResourceGroupName'), 'Microsoft.Network/virtualNetworks', parameters('existingNetworkName'))]",
+        "peeringName": "[concat(parameters('newNetworkName'), '/peering-to-', concat(parameters('existingNetworkName')))]"
     },
     "resources": [
         {
@@ -47,15 +42,7 @@
                     "addressPrefixes": [
                         "[parameters('newNetworkAddressPrefix')]"
                     ]
-                },
-                "subnets": [
-                    {
-                        "name": "[parameters('newNetworkSubnetName')]",
-                        "properties": {
-                            "addressPrefix": "[parameters('newNetworkSubnetPrefix')]"
-                        }
-                    }
-                ]
+                }
             }
         },
         {
@@ -63,10 +50,13 @@
             "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
             "name": "[variables('peeringName')]",
             "location": "[parameters('location')]",
+            "dependsOn": [
+                "[parameters('newNetworkName')]"
+            ],
             "properties": {
                 "allowVirtualNetworkAccess": true,
-                "allowForwardedTraffic": false,
-                "allowGatewayTransit": false,
+                "allowForwardedTraffic": true,
+                "allowGatewayTransit": true,
                 "useRemoteGateways": false,
                 "remoteVirtualNetwork": {
                     "id": "[variables('existingNetworkIdentifier')]"
