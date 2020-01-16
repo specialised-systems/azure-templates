@@ -1,0 +1,33 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json",
+    "contentVersion": "0.0.1.1",
+    "parameters": {
+        "networkName": {
+            "type": "string",
+            "minLength": 1
+        },
+        "subnetName": {
+            "type": "string",
+            "minLength": 1
+        },
+        "cidr": {
+            "type": "string",
+            "minLength": 1
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": ""
+        }
+    },
+    "resources": [
+        {
+            "apiVersion": "2015-05-01-preview",
+            "type": "Microsoft.Network/virtualNetworks/subnets",
+            "name": "[concat(parameters('networkName'), '/', parameters('subnetName'))]",
+            "location": "[parameters('location')]",
+            "properties": {
+                "addressPrefix": "[parameters('cidr')]"
+            }
+        }
+    ]
+}
