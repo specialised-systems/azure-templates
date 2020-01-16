@@ -38,11 +38,15 @@
             "metadata": {
                 "description": "Location for all resources."
             }
+        },
+        "serviceSubnet": {
+            "type": "string",
+            "minLength": 1
         }
     },
     "resources": [
         {
-            "apiVersion": "2014-04-01",
+            "apiVersion": "2015-05-01-preview",
             "name": "[parameters('serverName')]",
             "type": "Microsoft.Sql/servers",
             "location": "[parameters('location')]",
@@ -51,37 +55,33 @@
                 "administratorLogin": "[parameters('adminUsername')]",
                 "administratorLoginPassword": "[parameters('adminPassword')]",
                 "version": "12.0"
-            },
-            "resources": [
-                {
-                    "name": "[uniqueString(parameters('serverName'), 'AllowAllWindowsAzureIps' )]",
-                    "type": "firewallRules",
-                    "location": "[parameters('location')]",
-                    "apiVersion": "2014-04-01",
-                    "dependsOn": [
-                        "[concat('Microsoft.Sql/servers/', parameters('serverName'))]"
-                    ],
-                    "properties": {
-                        "startIpAddress": "0.0.0.0",
-                        "endIpAddress": "0.0.0.0"
-                    }
-                },
-                {
-                    "name": "[parameters('databaseName')]",
-                    "type": "databases",
-                    "kind": "v12.0,user",
-                    "location": "[parameters('location')]",
-                    "apiVersion": "2014-04-01",
-                    "dependsOn": [
-                        "[parameters('serverName')]"
-                    ],
-                    "properties": {
-                        "collation": "[parameters('databaseCollation')]",
-                        "edition": "[parameters('databaseEdition')]",
-                        "maxSizeBytes": "1073741824"
-                    }
-                }
-            ]
+            }
+        },
+        {
+            "apiVersion": "2017-03-01-preview",
+            "name": "[concat(parameters('serverName'), '/', parameters('databaseName'))]",
+            "type": "Microsoft.Sql/servers/databases",
+            "kind": "v12.0,user",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Sql/servers', parameters('serverName'))]"
+            ],
+            "properties": {
+                "collation": "[parameters('databaseCollation')]",
+                "edition": "[parameters('databaseEdition')]",
+                "maxSizeBytes": 268435456000
+            }
+        },
+        {
+            "apiVersion": "2015-05-01-preview",
+            "name": "[concat(parameters('serverName'), '/', uniqueString('vnet-rule-', parameters('serverName')))]",
+            "type": "Microsoft.Sql/servers/virtualNetworkRules",
+            "dependsOn": [
+                "[resourceId('Microsoft.Sql/servers', parameters('serverName'))]"
+            ],
+            "properties": {
+                "virtualNetworkSubnetId": "[parameters('serviceSubnet')]"
+            }
         }
     ],
     "outputs": {
