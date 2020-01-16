@@ -21,6 +21,12 @@ These templates are written to satisfy the needs of our customers, and may not
 be suitable for others. Nonetheless, we welcome pull requests and encourage
 others to try our templates.
 
+## Usage
+
+Fork this repository and then add your own customisations over the top. To
+update your fork, merge from this (upstream) repository and upgrade to our most
+recent templates.
+
 ## Standards and Practices
 
 One of the stated aims of this repository is to apply informed standards and
@@ -50,6 +56,20 @@ All parameters names follow the `camelCase` convention. Wherever possible,
 parameters should have reasonable default values. These default values must
 ensure that, when executed, the template produce resources that follow other
 standards and practices.
+
+### API Versions
+
+The latest API versions should always be used. The following commands shows how
+to retrieve the API versions for various resource types.
+
+```
+(Get-AzureRmResourceProvider -ProviderNamespace Microsoft.Insights).ResourceTypes | Where {$_.ResourceTypeName -eq 'components'} | Select -ExpandProperty ApiVersions
+(Get-AzureRmResourceProvider -ProviderNamespace Microsoft.SQL).ResourceTypes | Where {$_.ResourceTypeName -eq 'servers/databases'} | Select -ExpandProperty ApiVersions
+```
+
+When executed, these commands will provide the API versions for a resource
+type. By changing the resource type, this command can provide the API versions
+for any resource type.
 
 ## References
 
