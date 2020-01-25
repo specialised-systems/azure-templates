@@ -62,7 +62,7 @@ standards and practices.
 The latest API versions should always be used. The following commands shows how
 to retrieve the API versions for various resource types.
 
-```
+```PowerShell
 (Get-AzureRmResourceProvider -ProviderNamespace Microsoft.Insights).ResourceTypes | Where {$_.ResourceTypeName -eq 'components'} | Select -ExpandProperty ApiVersions
 (Get-AzureRmResourceProvider -ProviderNamespace Microsoft.SQL).ResourceTypes | Where {$_.ResourceTypeName -eq 'servers/databases'} | Select -ExpandProperty ApiVersions
 ```
