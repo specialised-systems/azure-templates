@@ -6,7 +6,7 @@ data moving between peered networks.
 
 [![Deploy Button](https://raw.githubusercontent.com/specialised-systems/azure-templates/master/images/deploy-to-azure-button.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fspecialised-systems%2Fazure-templates%2Fmaster%2Ftemplates%2Fpeered-vnet%2Fdeploy.json)
 
-## Prerequisites
+## Further Work
 
 For peering to work, a peering link must also be created from the existing
 virtual network to the virtual network created by this template.
