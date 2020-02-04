@@ -11,7 +11,7 @@ purposes, they have 3 key shortcomings:
 While they suffice for 'getting started', they did not provide us with what we
 needed to provide production-quality deployments for our customers.
 
-This Azure templates in this repository:
+The templates in this repository:
 
   1. focus on quality over quantity;
   2. apply informed standards and practices;
