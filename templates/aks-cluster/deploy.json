@@ -39,6 +39,22 @@
         "servicePrincipalClientSecret": {
             "type": "string",
             "minLength": 1
+        },
+        "serviceCidr": {
+            "type": "string",
+            "minLength": 1
+        },
+        "podCidr": {
+            "type": "string",
+            "minLength": 1
+        },
+        "dockerBridgeCidr": {
+            "type": "string",
+            "minLength": 1
+        },
+        "dnsServiceIP": {
+            "type": "string",
+            "minLength": 1
         }
     },
     "variables": {
@@ -68,10 +84,10 @@
                     "Secret": "[parameters('servicePrincipalClientSecret')]"
                 },
                 "networkProfile": {
-                    "serviceCidr": "10.6.0.0/24",
-                    "podCidr":"10.6.1.0/24",
-                    "dockerBridgeCidr": "172.17.0.1/16",
-                    "dnsServiceIP":"10.6.0.10",
+                    "serviceCidr": "[parameters('serviceCidr')]",
+                    "podCidr":"[parameters('podCidr')]",
+                    "dockerBridgeCidr": "[parameters('dockerBridgeCidr')]",
+                    "dnsServiceIP": "[parameters('dnsServiceIP')]",
                     "networkPlugin": "azure"
                 }
             }
