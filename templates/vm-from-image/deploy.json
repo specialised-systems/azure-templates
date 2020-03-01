@@ -113,6 +113,10 @@
                 "storageProfile": {
                     "imageReference": {
                         "id": "[resourceId(parameters('imageSubscriptionId'), parameters('imageResourceGroupName'), 'Microsoft.Compute/images', parameters('imageName'))]"
+                    },
+                    "osDisk": {
+                        "diskSizeGB": "256",
+                        "createOption": "FromImage"
                     }
                 },
                 "osProfile": {
