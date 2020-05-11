@@ -76,7 +76,8 @@
                         "vmSize": "[parameters('nodeVMSize')]",
                         "osType": "[variables('operatingSystem')]",
                         "vnetSubnetID": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('networkName'), parameters('subnetName'))]",
-                        "storageProfile": "ManagedDisks"
+                        "storageProfile": "ManagedDisks",
+                        "type": "VirtualMachineScaleSets"
                     }
                 ],
                 "servicePrincipalProfile": {
