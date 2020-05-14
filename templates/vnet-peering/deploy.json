@@ -1,0 +1,47 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json",
+    "contentVersion": "0.0.1.1",
+    "parameters": {
+        "toNetworkSubscriptionId": {
+            "type": "string",
+            "minLength": 1
+        },
+        "toNetworkResourceGroupName": {
+            "type": "string",
+            "minLength": 1
+        },
+        "toNetworkName": {
+            "type": "string",
+            "minLength": 1
+        },
+        "fromNetworkName": {
+            "type": "string",
+            "minLength": 1
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": ""
+        }
+    },
+    "variables": {
+        "toNetworkIdentifier": "[resourceId(parameters('toNetworkSubscriptionId'), parameters('toNetworkResourceGroupName'), 'Microsoft.Network/virtualNetworks', parameters('toNetworkName'))]",
+        "peeringName": "[concat(parameters('fromNetworkName'), '/peering-to-', concat(parameters('toNetworkName')))]"
+    },
+    "resources": [
+        {
+            "apiVersion": "2017-06-01",
+            "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
+            "name": "[variables('peeringName')]",
+            "location": "[parameters('location')]",
+            "properties": {
+                "allowVirtualNetworkAccess": true,
+                "allowForwardedTraffic": true,
+                "allowGatewayTransit": true,
+                "useRemoteGateways": false,
+                "remoteVirtualNetwork": {
+                    "id": "[variables('toNetworkIdentifier')]"
+                }
+            }
+        }
+    ]
+}
