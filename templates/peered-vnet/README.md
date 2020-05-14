@@ -9,4 +9,5 @@ data moving between peered networks.
 ## Further Work
 
 For peering to work, a peering link must also be created from the existing
-virtual network to the virtual network created by this template.
+virtual network to the virtual network created by this template. To accomplish
+this, use the `vnet-peering` template.
