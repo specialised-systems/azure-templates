@@ -14,6 +14,10 @@
             "type": "string",
             "minLength": 1
         },
+        "nodeResourceGroup": {
+            "type": "string",
+            "minLength": 1
+        },
         "location": {
             "type": "string",
             "defaultValue": "[resourceGroup().location]"
@@ -68,6 +72,7 @@
             "location": "[parameters('location')]",
             "name": "[parameters('clusterName')]",
             "properties": {
+                "nodeResourceGroup": "[parameters('nodeResourceGroup')]",
                 "dnsPrefix": "[parameters('dnsPrefix')]",
                 "agentPoolProfiles": [
                     {
