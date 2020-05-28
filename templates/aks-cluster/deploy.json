@@ -6,6 +6,10 @@
             "type": "string",
             "minLength": 1
         },
+        "networkResourceGroupName": {
+            "type": "string",
+            "minLength": 1
+        },
         "networkName": {
             "type": "string",
             "minLength": 1
@@ -80,7 +84,7 @@
                         "count": "[parameters('nodeCount')]",
                         "vmSize": "[parameters('nodeVMSize')]",
                         "osType": "[variables('operatingSystem')]",
-                        "vnetSubnetID": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('networkName'), parameters('subnetName'))]",
+                        "vnetSubnetID": "[resourceId(parameters('networkResourceGroupName'), 'Microsoft.Network/virtualNetworks/subnets', parameters('networkName'), parameters('subnetName'))]",
                         "storageProfile": "ManagedDisks",
                         "type": "VirtualMachineScaleSets"
                     }
