@@ -23,8 +23,7 @@
             "minLength": 1
         },
         "location": {
-            "type": "string",
-            "defaultValue": ""
+            "type": "string"
         }
     },
     "variables": {
