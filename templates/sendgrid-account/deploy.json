@@ -1,0 +1,92 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "name": {
+            "type": "String",
+            "minLength": 4,
+            "maxLength": 50
+        },
+        "location": {
+            "type": "String",
+            "minLength": 1
+        },
+        "planName": {
+            "type": "String",
+            "minLength": 1,
+            "allowedValues": [
+                "free",
+                "silver",
+                "gold",
+                "platinum",
+                "premier"
+            ],
+            "defaultValue": "free"
+        },
+        "planPublisher": {
+            "type": "String",
+            "minLength": 1,
+            "defaultValue": "Sendgrid"
+        },
+        "planProduct": {
+            "type": "String",
+            "defaultValue": "sendgrid_azure"
+        },
+        "planPromotionCode": {
+            "type": "String",
+            "defaultValue": ""
+        },
+        "password": {
+            "type": "SecureString",
+            "minLength": 1
+        },
+        "email": {
+            "type": "String",
+            "minLength": 1
+        },
+        "firstName": {
+            "type": "String",
+            "minLength": 1
+        },
+        "lastName": {
+            "type": "String",
+            "minLength": 1
+        },
+        "company": {
+            "type": "String",
+            "minLength": 1
+        },
+        "website": {
+            "type": "String",
+            "minLength": 1
+        },
+        "acceptMarketingEmails": {
+            "type": "String",
+            "minLength": 1,
+            "defaultValue": "false"
+        }
+    },
+    "resources": [
+        {
+            "type": "Sendgrid.Email/accounts",
+            "apiVersion": "2015-01-01",
+            "name": "[parameters('name')]",
+            "location": "[parameters('location')]",
+            "plan": {
+                "name": "[parameters('planName')]",
+                "publisher": "[parameters('planPublisher')]",
+                "product": "[parameters('planProduct')]",
+                "promotionCode": "[parameters('planPromotionCode')]"
+            },
+            "properties": {
+                "password": "[parameters('password')]",
+                "acceptMarketingEmails": "[parameters('acceptMarketingEmails')]",
+                "email": "[parameters('email')]",
+                "firstName": "[parameters('firstName')]",
+                "lastName": "[parameters('lastName')]",
+                "company": "[parameters('company')]",
+                "website": "[parameters('website')]"
+            }
+        }
+    ]
+}

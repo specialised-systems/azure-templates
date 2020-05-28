@@ -1,0 +1,82 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json",
+    "contentVersion": "0.0.1.1",
+    "parameters": {
+        "serverName": {
+            "type": "string",
+            "minLength": 1
+        },
+        "adminUsername": {
+            "type": "string",
+            "defaultValue": "db-admin",
+            "minLength": 1
+        },
+        "adminPassword": {
+            "type": "securestring",
+            "minLength": 1
+        },
+        "databaseEdition": {
+            "type": "string",
+            "allowedValues": [
+                "Basic",
+                "Standard",
+                "Premium"
+            ],
+            "defaultValue": "Basic"
+        },
+        "elasticPoolName": {
+            "type": "string",
+            "minLength": 1
+        },
+        "elasticPoolDtu": {
+            "type": "int",
+            "defaultValue": 50
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]"
+        },
+        "serviceSubnet": {
+            "type": "string",
+            "minLength": 1
+        }
+    },
+    "resources": [
+        {
+            "apiVersion": "2015-05-01-preview",
+            "name": "[parameters('serverName')]",
+            "type": "Microsoft.Sql/servers",
+            "location": "[parameters('location')]",
+            "kind": "v12.0",
+            "properties": {
+                "administratorLogin": "[parameters('adminUsername')]",
+                "administratorLoginPassword": "[parameters('adminPassword')]",
+                "version": "12.0"
+            }
+        },
+        {
+            "apiVersion": "2015-05-01-preview",
+            "name": "[concat(parameters('serverName'), '/', uniqueString('vnet-rule-', parameters('serverName')))]",
+            "type": "Microsoft.Sql/servers/virtualNetworkRules",
+            "dependsOn": [
+                "[resourceId('Microsoft.Sql/servers', parameters('serverName'))]"
+            ],
+            "properties": {
+                "virtualNetworkSubnetId": "[parameters('serviceSubnet')]"
+            }
+        },
+        {
+            "apiVersion": "2014-04-01",
+            "dependsOn": [
+                "[concat('Microsoft.Sql/servers/', parameters('serverName'))]"
+            ],
+            "location": "[parameters('location')]",
+            "name": "[concat(parameters('serverName'), '/', parameters('elasticPoolName'))]",
+            "properties": {
+                "edition": "[parameters('databaseEdition')]",
+                "dtu": "[parameters('elasticPoolDtu')]"                            
+            },
+            "type": "Microsoft.Sql/servers/elasticPools"
+        }
+    ]
+}
