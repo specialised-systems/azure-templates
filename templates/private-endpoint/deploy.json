@@ -1,0 +1,60 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+      "privateEndpointName": {
+          "type": "string",
+          "metadata": {
+              "description": "Specifies the name of the private endpoint."
+          }
+      },
+      "privateLinkResourceId": {
+          "type": "string",
+          "metadata": {
+              "description": "The ID of the resource"
+          }
+      },
+      "targetSubResource": {
+          "type": "array",
+          "metadata": {
+              "description": "The subresource you are accessing"
+          },
+          "defaultValue": ["file"]
+      },
+      "subnetId": {
+          "type": "string",
+          "metadata": {
+              "description": "The subnet ID where the private endpoint will be."
+          }
+      },
+      "location": {
+          "type": "string",
+          "defaultValue": "[resourceGroup().location]",
+          "metadata": {
+              "description": "Specifies the location in which the Azure Storage resources should be deployed."
+          }
+      }
+  },
+  "resources": [
+      {
+            "location": "[parameters('location')]",
+            "name": "[parameters('privateEndpointName')]",
+            "type": "Microsoft.Network/privateEndpoints",
+            "apiVersion": "2020-03-01",
+            "properties": {
+                "subnet": {
+                    "id": "[parameters('subnetId')]"
+                },
+                "privateLinkServiceConnections": [
+                    {
+                        "name": "[parameters('privateEndpointName')]",
+                        "properties": {
+                            "privateLinkServiceId": "[parameters('privateLinkResourceId')]",
+                            "groupIds": "[parameters('targetSubResource')]"
+                        }
+                    }
+                ]
+            }
+      }
+  ]
+}
