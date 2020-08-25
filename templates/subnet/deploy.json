@@ -26,7 +26,8 @@
             "name": "[concat(parameters('networkName'), '/', parameters('subnetName'))]",
             "location": "[parameters('location')]",
             "properties": {
-                "addressPrefix": "[parameters('cidr')]"
+                "addressPrefix": "[parameters('cidr')]",
+                "privateEndpointNetworkPolicies": "Disabled"
             }
         }
     ]
